@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class HomeScreenProvider with ChangeNotifier {
   bool _isListening = false;
@@ -8,14 +9,30 @@ class HomeScreenProvider with ChangeNotifier {
 
   String _response = '';
   String get response => _response;
+  final stt.SpeechToText _speech = stt.SpeechToText();
 
   TextEditingController _controller = TextEditingController();
   TextEditingController get controller => _controller;
 
   final gemini = Gemini.instance;
 
-  void toggleListening() {
-    _isListening = !_isListening;
+  Future<void> toggleListening() async {
+    if (_speech.isListening) {
+      await _speech.stop();
+      _isListening = false;
+    } else {
+      bool available = await _speech.initialize();
+      if (available) {
+        _isListening = true;
+        _speech.listen(
+          onResult: (result) {
+            if (result.finalResult) {
+              sendMessage(result.recognizedWords);
+            }
+          },
+        );
+      }
+    }
     notifyListeners();
   }
 

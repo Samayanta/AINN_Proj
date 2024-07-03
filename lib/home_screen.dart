@@ -54,6 +54,13 @@ class HomeScreen extends StatelessWidget {
             icon: Icon(provider.isListening ? Icons.mic : Icons.mic_none,
                 color: Colors.deepPurple),
             onPressed: () {
+              IconButton(
+                icon: Icon(provider.isListening ? Icons.mic : Icons.mic_none,
+                    color: Colors.deepPurple),
+                onPressed: () {
+                  provider.toggleListening();
+                },
+              );
               provider.toggleListening();
               // Add speech to text functionality if needed
             },
@@ -69,11 +76,13 @@ class HomeScreen extends StatelessWidget {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(25),
-                  borderSide: const BorderSide(color: Colors.deepPurple, width: 2),
+                  borderSide:
+                      const BorderSide(color: Colors.deepPurple, width: 2),
                 ),
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.send, color: Colors.deepPurple),
-                  onPressed: () => provider.sendMessage(provider.controller.text),
+                  onPressed: () =>
+                      provider.sendMessage(provider.controller.text),
                 ),
               ),
               onSubmitted: (message) => provider.sendMessage(message),
